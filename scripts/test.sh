@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # ------------------------------------------------------------- #
 # End-to-end validation test script for gnome-shell-pod images. #

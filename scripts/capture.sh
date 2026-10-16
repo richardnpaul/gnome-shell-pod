@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # ----------------------------------------------------------------------------- #
 # Automated screenshot capture script for gnome-shell-pod documentation images. #

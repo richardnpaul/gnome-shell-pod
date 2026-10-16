@@ -1,9 +1,9 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-# -------------------------------------------------------------------------------------- #
-# This script asks the running GNOME Shell to re-scan and load newly installed            #
-# extensions from ~/.local/share/gnome-shell/extensions.                                 #
-# -------------------------------------------------------------------------------------- #
+# ---------------------------------------------------------------------------- #
+# This script asks the running GNOME Shell to re-scan and load newly installed #
+# extensions from ~/.local/share/gnome-shell/extensions.                       #
+# ---------------------------------------------------------------------------- #
 
 set -o errexit
 set -o nounset

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # --------------------------------------------------------------------------------- #
 # This script captures a screenshot of the running GNOME Shell headless session via #

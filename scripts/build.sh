@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # -------------------------------------------------------------- #
 # Build container images locally using Podman or Docker.         #

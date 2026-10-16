@@ -1,9 +1,9 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-# -------------------------------------------------------------------------------------- #
-# This script waits until systemd and the user session bus / wayland socket are ready.   #
-# It includes a timeout so it will never hang indefinitely.                              #
-# -------------------------------------------------------------------------------------- #
+# ------------------------------------------------------------------------------------ #
+# This script waits until systemd and the user session bus / wayland socket are ready. #
+# It includes a timeout so it will never hang indefinitely.                            #
+# ------------------------------------------------------------------------------------ #
 
 set -o errexit
 set -o nounset

@@ -1,4 +1,7 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
 
 # Required for Wayland and D-Bus in headless session.
 XDG_RUNTIME_DIR="/run/user/$(id -u)"
