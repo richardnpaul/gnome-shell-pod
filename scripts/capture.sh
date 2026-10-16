@@ -111,10 +111,6 @@ do_in_pod wait-user-bus.sh
 printf 'Waiting for org.gnome.Shell.Extensions D-Bus interface...\n'
 do_in_pod wait-dbus-interface.sh -d org.gnome.Shell -o /org/gnome/Shell -i org.gnome.Shell.Extensions
 
-# Disable UI animations and notifications so screenshots are clean and deterministic
-do_in_pod gsettings set org.gnome.desktop.interface enable-animations false
-do_in_pod gsettings set org.gnome.desktop.notifications show-banners false
-
 # --- 1. Clean desktop with top bar and default background ---
 printf '\n[1/3] Capturing desktop with top bar and background...\n'
 eval_js "(async () => { const Main = await import('resource:///org/gnome/shell/ui/main.js'); Main.overview.hide(); })()" >/dev/null

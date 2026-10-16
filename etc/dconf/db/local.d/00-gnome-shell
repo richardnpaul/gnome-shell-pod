@@ -1,4 +1,5 @@
 [org/gnome/shell]
+# Disable the welcome dialog.
 welcome-dialog-last-shown-version='9999'
 
 [org/gnome/desktop/screensaver]

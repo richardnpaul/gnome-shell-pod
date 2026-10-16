@@ -78,6 +78,7 @@ if [[ "${EVAL_OUT}" != *"'2026'"* ]]; then
 fi
 
 printf '5. Installing test extension...\n'
+# This is going to be brittle and eventually will break when the shell version moves on too far
 ${CONTAINER_RUNTIME} exec --user gnomeshell "${POD}" bash -c "
 EXT_DIR=~/.local/share/gnome-shell/extensions/test-wayland@example.com
 mkdir -p \"\$EXT_DIR\"
