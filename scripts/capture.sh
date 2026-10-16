@@ -115,9 +115,9 @@ do_in_pod wait-dbus-interface.sh -d org.gnome.Shell -o /org/gnome/Shell -i org.g
 printf '\n[1/3] Capturing desktop with top bar and background...\n'
 eval_js "(async () => { const Main = await import('resource:///org/gnome/shell/ui/main.js'); Main.overview.hide(); })()" >/dev/null
 sleep 1
-do_in_pod screenshot.sh /home/gnomeshell/capture1.png
-${CONTAINER_RUNTIME} cp "${POD}:/home/gnomeshell/capture1.png" "${OUTPUT_DIR}/capture1.png"
-printf '  -> Saved %s/capture1.png\n' "${OUTPUT_DIR}"
+do_in_pod screenshot.sh /home/gnomeshell/capture1.jpg
+${CONTAINER_RUNTIME} cp "${POD}:/home/gnomeshell/capture1.jpg" "${OUTPUT_DIR}/capture1.jpg"
+printf '  -> Saved %s/capture1.jpg\n' "${OUTPUT_DIR}"
 
 # --- 2. Desktop with GNOME Settings app open ---
 printf '\n[2/3] Launching GNOME Settings and capturing desktop...\n'
@@ -141,9 +141,9 @@ fi
 # Ensure overview does not obscure the opened window
 eval_js "(async () => { const Main = await import('resource:///org/gnome/shell/ui/main.js'); Main.overview.hide(); })()" >/dev/null
 sleep 1
-do_in_pod screenshot.sh /home/gnomeshell/capture2.png
-${CONTAINER_RUNTIME} cp "${POD}:/home/gnomeshell/capture2.png" "${OUTPUT_DIR}/capture2.png"
-printf '  -> Saved %s/capture2.png\n' "${OUTPUT_DIR}"
+do_in_pod screenshot.sh /home/gnomeshell/capture2.jpg
+${CONTAINER_RUNTIME} cp "${POD}:/home/gnomeshell/capture2.jpg" "${OUTPUT_DIR}/capture2.jpg"
+printf '  -> Saved %s/capture2.jpg\n' "${OUTPUT_DIR}"
 
 # Close Settings app and wait for window to disappear
 ${CONTAINER_RUNTIME} exec --user gnomeshell "${POD}" killall gnome-control-center 2>/dev/null || true
@@ -172,9 +172,9 @@ eval_js "(async () => {
   }
 })()" >/dev/null
 sleep 1
-do_in_pod screenshot.sh /home/gnomeshell/capture3.png
-${CONTAINER_RUNTIME} cp "${POD}:/home/gnomeshell/capture3.png" "${OUTPUT_DIR}/capture3.png"
-printf '  -> Saved %s/capture3.png\n' "${OUTPUT_DIR}"
+do_in_pod screenshot.sh /home/gnomeshell/capture3.jpg
+${CONTAINER_RUNTIME} cp "${POD}:/home/gnomeshell/capture3.jpg" "${OUTPUT_DIR}/capture3.jpg"
+printf '  -> Saved %s/capture3.jpg\n' "${OUTPUT_DIR}"
 
 printf '\n==============================================================\n'
 printf 'SUCCESS: All 3 images captured and saved to %s\n' "${OUTPUT_DIR}"

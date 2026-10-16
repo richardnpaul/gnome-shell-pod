@@ -2,15 +2,15 @@
 
 # --------------------------------------------------------------------------------- #
 # This script captures a screenshot of the running GNOME Shell headless session via #
-# the org.gnome.Shell.Screenshot D-Bus API.                                         #
+# the org.gnome.Shell.Screenshot D-Bus API. Supports PNG (.png) and JPEG (.jpg).    #
 #                                                                                   #
-# Usage: screenshot.sh [output_path.png]                                            #
+# Usage: screenshot.sh [output_path.png|output_path.jpg]                            #
 # --------------------------------------------------------------------------------- #
 
 set -o errexit
 set -o nounset
 
-OUTPUT="${1:-/home/gnomeshell/capture.png}"
+OUTPUT="${1:-/home/gnomeshell/capture.jpg}"
 
 if [ -z "${XDG_RUNTIME_DIR:-}" ]; then
   XDG_RUNTIME_DIR="/run/user/$(id -u)"
@@ -20,9 +20,24 @@ if [ -z "${DBUS_SESSION_BUS_ADDRESS:-}" ]; then
   export DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR}/bus"
 fi
 
-gdbus call --session \
-    --dest org.gnome.Shell \
-    --object-path /org/gnome/Shell/Screenshot \
-    --method org.gnome.Shell.Screenshot.Screenshot false false "$OUTPUT" >/dev/null
+if [[ "${OUTPUT}" =~ \.jpe?g$ ]]; then
+  TMP_PNG="${OUTPUT}.tmp.png"
+  gdbus call --session \
+      --dest org.gnome.Shell \
+      --object-path /org/gnome/Shell/Screenshot \
+      --method org.gnome.Shell.Screenshot.Screenshot false false "${TMP_PNG}" >/dev/null
 
-printf '%s\n' "$OUTPUT"
+  gjs -c "
+    const GdkPixbuf = imports.gi.GdkPixbuf;
+    const pb = GdkPixbuf.Pixbuf.new_from_file('${TMP_PNG}');
+    pb.savev('${OUTPUT}', 'jpeg', ['quality'], ['85']);
+  "
+  rm -f "${TMP_PNG}"
+else
+  gdbus call --session \
+      --dest org.gnome.Shell \
+      --object-path /org/gnome/Shell/Screenshot \
+      --method org.gnome.Shell.Screenshot.Screenshot false false "${OUTPUT}" >/dev/null
+fi
+
+printf '%s\n' "${OUTPUT}"

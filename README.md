@@ -131,7 +131,7 @@ To run the verification test suite on any existing image:
 
 ## Capturing Documentation Screenshots
 
-To automate generating the 3 preview screenshots (`capture1.png`, `capture2.png`, and `capture3.png`):
+To automate generating the 3 preview screenshots (`capture1.jpg`, `capture2.jpg`, and `capture3.jpg`):
 
 ```bash
 # Generates the 3 canonical preview images into pictures/
@@ -142,9 +142,9 @@ To automate generating the 3 preview screenshots (`capture1.png`, `capture2.png`
 ```
 
 <p align="center">
-  <img src="pictures/44/capture1.png" alt="Desktop with Wallpaper" width="32%" />
-  <img src="pictures/44/capture2.png" alt="GNOME Settings" width="32%" />
-  <img src="pictures/44/capture3.png" alt="Show Applications" width="32%" />
+  <img src="pictures/44/capture1.jpg" alt="Desktop with Wallpaper" width="32%" />
+  <img src="pictures/44/capture2.jpg" alt="GNOME Settings" width="32%" />
+  <img src="pictures/44/capture3.jpg" alt="Show Applications" width="32%" />
 </p>
 
 ## :octocat: Contributing
