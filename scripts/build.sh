@@ -113,7 +113,7 @@ build_version() {
 }
 
 if [[ "${VERSION}" == "all" ]]; then
-  for v in "41" "42" "43" "44"; do
+  for v in "41" "42" "43" "44" "rawhide"; do
     build_version "$v"
   done
 else
