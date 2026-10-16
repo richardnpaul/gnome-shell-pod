@@ -53,15 +53,28 @@ OUTPUT_DIR="${POSITIONAL_ARGS[1]:-${REPO_ROOT}/pictures}"
 
 mkdir -p "${OUTPUT_DIR}"
 
-# Determine whether to use podman or docker
-if command -v podman >/dev/null 2>&1; then
-  CONTAINER_RUNTIME="podman"
+# Determine container runtime (podman or docker)
+if [[ -z "${CONTAINER_RUNTIME:-}" ]]; then
+  if command -v docker >/dev/null 2>&1 && docker image inspect "${IMAGE}" >/dev/null 2>&1; then
+    CONTAINER_RUNTIME="docker"
+  elif command -v podman >/dev/null 2>&1 && podman image exists "${IMAGE}" 2>/dev/null; then
+    CONTAINER_RUNTIME="podman"
+  elif command -v podman >/dev/null 2>&1; then
+    CONTAINER_RUNTIME="podman"
+  elif command -v docker >/dev/null 2>&1; then
+    CONTAINER_RUNTIME="docker"
+  else
+    printf 'Error: Neither podman nor docker was found in PATH.\n' >&2
+    exit 1
+  fi
+fi
+
+if [[ "${CONTAINER_RUNTIME}" == "podman" ]]; then
   RUN_OPTS=(--systemd=always --cap-add=SYS_NICE --cap-add=IPC_LOCK --cap-add=CAP_SYS_ADMIN)
-elif command -v docker >/dev/null 2>&1; then
-  CONTAINER_RUNTIME="docker"
-  RUN_OPTS=(--tmpfs /run --tmpfs /run/lock --tmpfs /tmp -v /sys/fs/cgroup:/sys/fs/cgroup:ro --cap-add=SYS_NICE --cap-add=IPC_LOCK --cap-add=CAP_SYS_ADMIN)
+elif [[ "${CONTAINER_RUNTIME}" == "docker" ]]; then
+  RUN_OPTS=(--privileged)
 else
-  printf 'Error: Neither podman nor docker was found in PATH.\n' >&2
+  printf 'Error: Unsupported CONTAINER_RUNTIME: %s\n' "${CONTAINER_RUNTIME}" >&2
   exit 1
 fi
 
@@ -106,8 +119,8 @@ do_in_pod gsettings set org.gnome.desktop.notifications show-banners false
 printf '\n[1/3] Capturing desktop with top bar and background...\n'
 eval_js "(async () => { const Main = await import('resource:///org/gnome/shell/ui/main.js'); Main.overview.hide(); })()" >/dev/null
 sleep 1
-do_in_pod screenshot.sh /tmp/capture1.png
-${CONTAINER_RUNTIME} cp "${POD}:/tmp/capture1.png" "${OUTPUT_DIR}/capture1.png"
+do_in_pod screenshot.sh /home/gnomeshell/capture1.png
+${CONTAINER_RUNTIME} cp "${POD}:/home/gnomeshell/capture1.png" "${OUTPUT_DIR}/capture1.png"
 printf '  -> Saved %s/capture1.png\n' "${OUTPUT_DIR}"
 
 # --- 2. Desktop with GNOME Settings app open ---
@@ -132,8 +145,8 @@ fi
 # Ensure overview does not obscure the opened window
 eval_js "(async () => { const Main = await import('resource:///org/gnome/shell/ui/main.js'); Main.overview.hide(); })()" >/dev/null
 sleep 1
-do_in_pod screenshot.sh /tmp/capture2.png
-${CONTAINER_RUNTIME} cp "${POD}:/tmp/capture2.png" "${OUTPUT_DIR}/capture2.png"
+do_in_pod screenshot.sh /home/gnomeshell/capture2.png
+${CONTAINER_RUNTIME} cp "${POD}:/home/gnomeshell/capture2.png" "${OUTPUT_DIR}/capture2.png"
 printf '  -> Saved %s/capture2.png\n' "${OUTPUT_DIR}"
 
 # Close Settings app and wait for window to disappear
@@ -163,8 +176,8 @@ eval_js "(async () => {
   }
 })()" >/dev/null
 sleep 1
-do_in_pod screenshot.sh /tmp/capture3.png
-${CONTAINER_RUNTIME} cp "${POD}:/tmp/capture3.png" "${OUTPUT_DIR}/capture3.png"
+do_in_pod screenshot.sh /home/gnomeshell/capture3.png
+${CONTAINER_RUNTIME} cp "${POD}:/home/gnomeshell/capture3.png" "${OUTPUT_DIR}/capture3.png"
 printf '  -> Saved %s/capture3.png\n' "${OUTPUT_DIR}"
 
 printf '\n==============================================================\n'

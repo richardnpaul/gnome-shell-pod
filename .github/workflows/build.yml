@@ -70,6 +70,8 @@ jobs:
           tags: local/gnome-shell-pod:${{ matrix.fedora_version }}
 
       - name: Run verification test suite
+        env:
+          CONTAINER_RUNTIME: docker
         run: |
           ./scripts/test.sh local/gnome-shell-pod:${{ matrix.fedora_version }}
 

@@ -24,13 +24,15 @@ SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 REPO_ROOT=$(cd -- "${SCRIPT_DIR}/.." && pwd)
 
 # Determine whether to use podman or docker
-if command -v podman >/dev/null 2>&1; then
-  CONTAINER_RUNTIME="podman"
-elif command -v docker >/dev/null 2>&1; then
-  CONTAINER_RUNTIME="docker"
-else
-  printf 'Error: Neither podman nor docker was found in PATH.\n' >&2
-  exit 1
+if [[ -z "${CONTAINER_RUNTIME:-}" ]]; then
+  if command -v podman >/dev/null 2>&1; then
+    CONTAINER_RUNTIME="podman"
+  elif command -v docker >/dev/null 2>&1; then
+    CONTAINER_RUNTIME="docker"
+  else
+    printf 'Error: Neither podman nor docker was found in PATH.\n' >&2
+    exit 1
+  fi
 fi
 
 usage() {

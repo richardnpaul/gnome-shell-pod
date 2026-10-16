@@ -13,13 +13,29 @@ set -o pipefail
 
 IMAGE="${1:-local/gnome-shell-pod:44}"
 
-# Determine whether to use podman or docker
-if command -v podman >/dev/null 2>&1; then
-  CONTAINER_RUNTIME="podman"
+# Determine container runtime (podman or docker)
+if [[ -z "${CONTAINER_RUNTIME:-}" ]]; then
+  if command -v docker >/dev/null 2>&1 && docker image inspect "${IMAGE}" >/dev/null 2>&1; then
+    CONTAINER_RUNTIME="docker"
+  elif command -v podman >/dev/null 2>&1 && podman image exists "${IMAGE}" 2>/dev/null; then
+    CONTAINER_RUNTIME="podman"
+  elif command -v podman >/dev/null 2>&1; then
+    CONTAINER_RUNTIME="podman"
+  elif command -v docker >/dev/null 2>&1; then
+    CONTAINER_RUNTIME="docker"
+  else
+    printf 'Error: Neither podman nor docker was found in PATH.\n' >&2
+    exit 1
+  fi
+fi
+
+if [[ "${CONTAINER_RUNTIME}" == "podman" ]]; then
   RUN_OPTS=(--systemd=always --cap-add=SYS_NICE --cap-add=IPC_LOCK --cap-add=CAP_SYS_ADMIN)
+elif [[ "${CONTAINER_RUNTIME}" == "docker" ]]; then
+  RUN_OPTS=(--privileged)
 else
-  CONTAINER_RUNTIME="docker"
-  RUN_OPTS=(--tmpfs /run --tmpfs /run/lock --tmpfs /tmp -v /sys/fs/cgroup:/sys/fs/cgroup:ro --cap-add=SYS_NICE --cap-add=IPC_LOCK --cap-add=CAP_SYS_ADMIN)
+  printf 'Error: Unsupported CONTAINER_RUNTIME: %s\n' "${CONTAINER_RUNTIME}" >&2
+  exit 1
 fi
 
 printf '==============================================================\n'
@@ -43,8 +59,14 @@ ${CONTAINER_RUNTIME} exec --user gnomeshell "${POD}" set-env.sh wait-dbus-interf
 
 printf '3. Capturing screenshot...\n'
 sleep 1
-${CONTAINER_RUNTIME} exec --user gnomeshell "${POD}" set-env.sh screenshot.sh /tmp/ci-test.png
-${CONTAINER_RUNTIME} cp "${POD}:/tmp/ci-test.png" /tmp/ci-test.png
+${CONTAINER_RUNTIME} exec --user gnomeshell "${POD}" set-env.sh screenshot.sh /home/gnomeshell/ci-test.png
+for _ in {1..10}; do
+  if ${CONTAINER_RUNTIME} exec "${POD}" test -f /home/gnomeshell/ci-test.png 2>/dev/null; then
+    break
+  fi
+  sleep 0.5
+done
+${CONTAINER_RUNTIME} cp "${POD}:/home/gnomeshell/ci-test.png" /tmp/ci-test.png
 file /tmp/ci-test.png
 
 printf '4. Testing JavaScript evaluation via org.gnome.Shell.Eval...\n'
