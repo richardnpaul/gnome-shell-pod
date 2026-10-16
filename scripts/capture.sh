@@ -111,10 +111,26 @@ do_in_pod wait-user-bus.sh
 printf 'Waiting for org.gnome.Shell.Extensions D-Bus interface...\n'
 do_in_pod wait-dbus-interface.sh -d org.gnome.Shell -o /org/gnome/Shell -i org.gnome.Shell.Extensions
 
+# Wait for GNOME Shell startup animation and initialization to complete
+for i in $(seq 1 50); do
+  res=$(eval_js "(async () => { const Main = await import('resource:///org/gnome/shell/ui/main.js'); return !Main.layoutManager._startingUp; })()" 2>/dev/null || true)
+  if [[ "${res}" == *" 'true')"* ]]; then
+    break
+  fi
+  sleep 0.2
+done
+
 # --- 1. Clean desktop with top bar and default background ---
 printf '\n[1/3] Capturing desktop with top bar and background...\n'
 eval_js "(async () => { const Main = await import('resource:///org/gnome/shell/ui/main.js'); Main.overview.hide(); })()" >/dev/null
-sleep 1
+for i in $(seq 1 30); do
+  res=$(eval_js "(async () => { const Main = await import('resource:///org/gnome/shell/ui/main.js'); return !Main.overview.visible; })()" 2>/dev/null || true)
+  if [[ "${res}" == *" 'true')"* ]]; then
+    break
+  fi
+  sleep 0.2
+done
+sleep 0.5
 do_in_pod screenshot.sh /home/gnomeshell/capture1.jpg
 ${CONTAINER_RUNTIME} cp "${POD}:/home/gnomeshell/capture1.jpg" "${OUTPUT_DIR}/capture1.jpg"
 printf '  -> Saved %s/capture1.jpg\n' "${OUTPUT_DIR}"

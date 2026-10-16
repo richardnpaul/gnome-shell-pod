@@ -18,6 +18,7 @@ RUN dnf --nodocs install -y \
         findutils \
         dconf \
         dbus-daemon \
+        GraphicsMagick \
     && dnf remove -y gnome-tour || true \
     && rm -f /etc/xdg/autostart/org.gnome.Tour.desktop /usr/share/applications/org.gnome.Tour.desktop /etc/xdg/autostart/org.gnome.Evolution-alarm-notify.desktop /etc/xdg/autostart/localsearch-3.desktop /etc/xdg/autostart/tracker-miner-fs-3.desktop \
     && dnf clean all -y \

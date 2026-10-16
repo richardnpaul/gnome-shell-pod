@@ -27,11 +27,7 @@ if [[ "${OUTPUT}" =~ \.jpe?g$ ]]; then
       --object-path /org/gnome/Shell/Screenshot \
       --method org.gnome.Shell.Screenshot.Screenshot false false "${TMP_PNG}" >/dev/null
 
-  gjs -c "
-    const GdkPixbuf = imports.gi.GdkPixbuf;
-    const pb = GdkPixbuf.Pixbuf.new_from_file('${TMP_PNG}');
-    pb.savev('${OUTPUT}', 'jpeg', ['quality'], ['85']);
-  "
+  gm convert "${TMP_PNG}" -quality 85 "${OUTPUT}"
   rm -f "${TMP_PNG}"
 else
   gdbus call --session \
