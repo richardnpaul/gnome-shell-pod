@@ -12,11 +12,11 @@ set -o nounset
 
 OUTPUT="${1:-/home/gnomeshell/capture.png}"
 
-if [ -z "$XDG_RUNTIME_DIR" ]; then
+if [ -z "${XDG_RUNTIME_DIR:-}" ]; then
   XDG_RUNTIME_DIR="/run/user/$(id -u)"
   export XDG_RUNTIME_DIR
 fi
-if [ -z "$DBUS_SESSION_BUS_ADDRESS" ]; then
+if [ -z "${DBUS_SESSION_BUS_ADDRESS:-}" ]; then
   export DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR}/bus"
 fi
 

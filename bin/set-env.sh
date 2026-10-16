@@ -14,7 +14,7 @@ export GTK_A11Y="none"
 export NO_AT_BRIDGE="1"
 
 # Also set DISPLAY for Xwayland applications if available.
-if [ -z "$DISPLAY" ] && [ -e /tmp/.X11-unix/X0 ]; then
+if [ -z "${DISPLAY:-}" ] && [ -e /tmp/.X11-unix/X0 ]; then
   export DISPLAY=:0
 fi
 
